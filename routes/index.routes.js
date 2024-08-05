@@ -160,10 +160,10 @@ indexRoutes.delete('/deleteResidenMarket/:id', deleteResidentMasrket);
 
 // Commercial Market Routes
 
-indexRoutes.post('/createCommercialMarket', createcommercialMarket);
+indexRoutes.post('/createCommercialMarket', upload.fields([{ name: "adharCard", maxCount: 1 }, { name: "lightBill", maxCount: 1 }, { name: "veraBill", maxCount: 1 }]), createcommercialMarket);
 indexRoutes.get('/getAllCommercialMarket', getAllCommercialmarket);
 indexRoutes.get('/getCommercialMarket/:id', getCommercialMarketById);
-indexRoutes.put('/updateCommercial/:id', updateCommercialMarket);
+indexRoutes.put('/updateCommercial/:id', upload.fields([{ name: "adharCard", maxCount: 1 }, { name: "lightBill", maxCount: 1 }, { name: "veraBill", maxCount: 1 }]), updateCommercialMarket);
 indexRoutes.delete('/deleteCommercial/:id', deleteCommercialMasrket);
 
 // Daily Price
