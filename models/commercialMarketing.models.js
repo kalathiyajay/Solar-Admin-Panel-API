@@ -94,6 +94,9 @@ const commercialMarketingSchema = mongoose.Schema({
         type: Number,
         require: true
     },
+
+// Residential Market Models
+
     fillNo: {
         type: String,
         require: true
@@ -190,7 +193,82 @@ const commercialMarketingSchema = mongoose.Schema({
     },
     phase: {
         type: Number
+    },
+
+    // Lisoning Models
+    liasoningType: {
+        type: String,
+        require: true
+    },
+    applicationStatus: {
+        type: String,
+        require: true
+    },
+    feasibilityStatus: {
+        type: String,
+        require: true
+    },
+    fQGenrete: {
+        type: String,
+        require: true
+    },
+    fqPaymentMode: {
+        type: String,
+        require: true
+    },
+    fqPaid: {
+        type: String,
+        require: true
+    },
+    fqPermission: {
+        type: String,
+        require: true
+    },
+    stamp: {
+        type: String,
+        require: true
+    },
+    netMeterDocumennt: {
+        type: String,
+        require: true
+    },
+    meterInstall: {
+        type: String,
+        require: true
+    },
+    subcidyclaimed: {
+        type: String,
+        require: true
+    },
+    subcidyRecieved: {
+        type: String,
+        require: true
+    },
+    liasoningQuery: {
+        type: String,
+        require: true
+    },
+
+    // Other Fields
+
+    adharCard: {
+        type: Array,
+        require: true
+    },
+    lightBill: {
+        type: Array,
+        require: true
+    },
+    veraBill: {
+        type: Array,
+        require: true
+    },
+    status: {
+        type: String,
+        enum: ["Pending", "Completed"],
+        default: "Pending"
     }
+    
 }, {
     timestamps: true,
     versionKey: false
