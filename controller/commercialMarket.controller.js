@@ -1,53 +1,3 @@
-// const commercialMarket = require('../models/commercialMarketing.models');
-// const { v4: uuidv4 } = require('uuid');
-
-// async function generateFillNo() {
-//     const lastCommercialMarket = await commercialMarket.findOne().sort({ createdAt: -1 });
-//     if (!lastCommercialMarket) {
-//         return 'A001';
-//     }
-
-//     const lastFillNo = lastCommercialMarket.fillNo;
-//     const prefix = lastFillNo.charAt(0);
-
-//     let sequenceNumber = parseInt(lastFillNo.substr(1));
-//     if (sequenceNumber < 5) {
-//         sequenceNumber++;
-//     } else {
-//         const nextPrefix = String.fromCharCode(prefix.charCodeAt(0) + 1);
-//         sequenceNumber = 1;
-//         return `${nextPrefix}001`;
-//     }
-
-//     return `${prefix}${sequenceNumber.toString().padStart(3, '0')}`;
-// }
-
-// async function generateFillNo() {
-//     // Find the last record and sort by 'fillNo' in descending order
-//     const lastCommercialMarket = await commercialMarket.findOne().sort({ fillNo: -1 });
-
-//     // If no record exists, start with 'A001'
-//     if (!lastCommercialMarket) {
-//         return 'A001';
-//     }
-
-//     const lastFillNo = lastCommercialMarket.fillNo;
-//     const prefix = lastFillNo.charAt(0);
-//     let sequenceNumber = parseInt(lastFillNo.substr(1));
-
-//     // Increment sequence number
-//     sequenceNumber++;
-
-//     // Check if sequenceNumber has exceeded 999
-//     if (sequenceNumber > 999) {
-//         const nextPrefix = String.fromCharCode(prefix.charCodeAt(0) + 1);
-//         sequenceNumber = 1;
-//         return `${nextPrefix}001`;
-//     }
-
-//     // Return the new fillNo with zero-padding
-//     return `${prefix}${sequenceNumber.toString().padStart(3, '0')}`;
-// }
 const commercialMarket = require('../models/commercialMarketing.models');
 const FillNoTracker = require('../models/fillNoTrackerModels');
 
@@ -73,7 +23,7 @@ async function generateFillNo() {
 
         tracker.prefix = newPrefix;
 
-        tracker.lastSequenceNumber = 1; 
+        tracker.lastSequenceNumber = 1;
 
         await tracker.save();
 
@@ -84,7 +34,7 @@ async function generateFillNo() {
         tracker.lastSequenceNumber = sequenceNumber;
         await tracker.save();
     }
-  
+
     return nextFillNo;
 }
 
@@ -94,7 +44,7 @@ exports.createcommercialMarket = async (req, res) => {
 
         if (type === "commercialMarketing") {
 
-            let { fillNo, date, contactPeosonName, dealer, phoneNumber, address, city, district, pincode, latitude, amount, gst, totalAmount, bank, consumerNameAsPerLightBill, dealerCommission, consumerNumber, conectionLoad, tarrif, averageMonthlyBill, gstNumber, panNumber, udhyamRegistration,phase } = req.body;
+            let { fillNo, date, contactPeosonName, dealer, phoneNumber, address, city, district, pincode, latitude, amount, gst, totalAmount, bank, consumerNameAsPerLightBill, dealerCommission, consumerNumber, conectionLoad, tarrif, averageMonthlyBill, gstNumber, panNumber, udhyamRegistration, phase, adharCard, lightBill, veraBill, status } = req.body;
 
             let checkcommercialMarket = await commercialMarket.findOne({ phoneNumber: req.body.phoneNumber })
 
@@ -104,6 +54,9 @@ exports.createcommercialMarket = async (req, res) => {
 
             if (!fillNo) {
                 fillNo = await generateFillNo();
+            }
+            if (!req.files || !req.files['adharCard'] || !req.files['lightBill'] || !req.files['veraBill']) {
+                return res.status(401).json({ status: 401, message: "Please upload all required files" });
             }
 
             checkcommercialMarket = await commercialMarket.create({
@@ -131,6 +84,10 @@ exports.createcommercialMarket = async (req, res) => {
                 panNumber,
                 udhyamRegistration,
                 phase,
+                adharCard: req.files['adharCard'][0].path,
+                lightBill: req.files['lightBill'][0].path,
+                veraBill: req.files['veraBill'][0].path,
+                status,
                 type: "commercialMarketing"
             });
 
@@ -139,7 +96,7 @@ exports.createcommercialMarket = async (req, res) => {
 
         if (type === "residentialMarketing") {
 
-            let { fillNo, date, consumerName, phoneNumber, consumerNumber, address, city, district, pincode, latitude, longitude, marketingType, primaryAccount, dealer, cashAmount, solarAmount, solarModuleMake, dealerPolicy, solarModulWp, solarModuleNos, systmSizeKw, inventrySize } = req.body;
+            let { fillNo, date, consumerName, phoneNumber, consumerNumber, address, city, district, pincode, latitude, longitude, marketingType, primaryAccount, dealer, cashAmount, solarAmount, solarModuleMake, dealerPolicy, solarModulWp, solarModuleNos, systmSizeKw, inventrySize, adharCard, lightBill, veraBill, status } = req.body;
 
             let checkResidentMarket = await commercialMarket.findOne({ phoneNumber: req.body.phoneNumber })
             if (checkResidentMarket) {
@@ -148,6 +105,10 @@ exports.createcommercialMarket = async (req, res) => {
 
             if (!fillNo) {
                 fillNo = await generateFillNo();
+            }
+
+            if (!req.files || !req.files['adharCard'] || !req.files['lightBill'] || !req.files['veraBill']) {
+                return res.status(401).json({ status: 401, message: "Please upload all required files" });
             }
 
             checkResidentMarket = await commercialMarket.create({
@@ -173,6 +134,10 @@ exports.createcommercialMarket = async (req, res) => {
                 solarModuleNos,
                 systmSizeKw,
                 inventrySize,
+                adharCard: req.files['adharCard'][0].path,
+                lightBill: req.files['lightBill'][0].path,
+                veraBill: req.files['veraBill'][0].path,
+                status,
                 type: "residentialMarketing"
             });
 
@@ -245,6 +210,12 @@ exports.updateCommercialMarket = async (req, res) => {
             return res.status(404).json({ status: 404, message: "CommercialMarket Not Found" })
         }
 
+        if (req.files) {
+            req.body.adharCard = req.files['adharCard'][0].path
+            req.body.lightBill = req.files['lightBill'][0].path
+            req.body.veraBill = req.files['veraBill'][0].path
+        }
+        
         checkCommercialMarketId = await commercialMarket.findByIdAndUpdate(id, { ...req.body }, { new: true });
 
         return res.status(200).json({ status: 200, message: "CommercialMarket Updated Successfully..", CommercialMarket: checkCommercialMarketId })
