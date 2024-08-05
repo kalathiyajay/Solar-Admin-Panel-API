@@ -1,0 +1,116 @@
+
+// exports.monthSearch = async (req, res) => {
+//     try {
+//         let startMonth = req.query.startMonth
+//         let lastMonth = req.query.lastMonth
+
+//         let startdate = new Date(startMonth)
+//         let lastdate = new Date(lastMonth)
+
+//         let getUser = await user.find({ createdAt: { $gte: startdate, $lt: lastdate } })
+
+//         res.json(getUser);
+//     } catch (error) {
+//         console.log(error);
+//         return res.status(500).json({ status: 500, message: error.message })
+//     }
+// }
+
+// indexRouter.get('/monthSearch',monthSearch);
+
+
+// orderDetails.forEach(newDetail => {
+//             const existingDetail = updateOrderData.orderDetails.find(detail => detail.ArticalId.toString() === newDetail.ArticalId.toString());
+
+//             if (existingDetail) {
+//                 // If item exists, increment the quantity
+//                 existingDetail.quantity += newDetail.quantity;
+//                 existingDetail.notes = newDetail.notes; // Update notes if needed
+//             } else {
+//                 // Otherwise, add new item
+//                 updateOrderData.orderDetails.push(newDetail);
+//             }
+//         });
+
+// const commercialMarket = require('../models/commercialMarketing.models');
+// const { v4: uuidv4 } = require('uuid');
+
+// async function generateFillNo() {
+//     const lastCommercialMarket = await commercialMarket.findOne().sort({ createdAt: -1 });
+//     if (!lastCommercialMarket) {
+//         return 'A001';
+//     }
+
+//     const lastFillNo = lastCommercialMarket.fillNo;
+//     const prefix = lastFillNo.charAt(0);
+
+//     let sequenceNumber = parseInt(lastFillNo.substr(1));
+//     if (sequenceNumber < 5) {
+//         sequenceNumber++;
+//     } else {
+//         const nextPrefix = String.fromCharCode(prefix.charCodeAt(0) + 1);
+//         sequenceNumber = 1;
+//         return `${nextPrefix}001`;
+//     }
+
+//     return `${prefix}${sequenceNumber.toString().padStart(3, '0')}`;
+// }
+
+// async function generateFillNo() {
+//     // Find the last record and sort by 'fillNo' in descending order
+//     const lastCommercialMarket = await commercialMarket.findOne().sort({ fillNo: -1 });
+
+//     // If no record exists, start with 'A001'
+//     if (!lastCommercialMarket) {
+//         return 'A001';
+//     }
+
+//     const lastFillNo = lastCommercialMarket.fillNo;
+//     const prefix = lastFillNo.charAt(0);
+//     let sequenceNumber = parseInt(lastFillNo.substr(1));
+
+//     // Increment sequence number
+//     sequenceNumber++;
+
+//     // Check if sequenceNumber has exceeded 999
+//     if (sequenceNumber > 999) {
+//         const nextPrefix = String.fromCharCode(prefix.charCodeAt(0) + 1);
+//         sequenceNumber = 1;
+//         return `${nextPrefix}001`;
+//     }
+
+//     // Return the new fillNo with zero-padding
+//     return `${prefix}${sequenceNumber.toString().padStart(3, '0')}`;
+// }
+
+
+
+
+// const commercialMarket = require('../models/commercialMarketing.models');
+// const FillNoTracker = require('../models/fillNoTrackerModels');
+
+// async function generateFillNo() {
+//     let tracker = await FillNoTracker.findOne({ prefix: 'A' });
+
+//     if (!tracker) {
+//         tracker = new FillNoTracker({ prefix: 'A', lastSequenceNumber: 0 });
+//         await tracker.save();
+//     }
+
+//     let nextFillNo;
+//     let sequenceNumber = tracker.lastSequenceNumber + 1;
+
+//     if (sequenceNumber > 9) {
+//         const newPrefix = String.fromCharCode(tracker.prefix.charCodeAt(0) + 1);
+//         sequenceNumber = 1;
+//         tracker.prefix = newPrefix;
+//         await tracker.save();
+//         nextFillNo = `${newPrefix}${sequenceNumber.toString().padStart(3, '0')}`;
+//     } else {
+//         nextFillNo = `${tracker.prefix}${sequenceNumber.toString().padStart(3, '0')}`;
+//         tracker.lastSequenceNumber = sequenceNumber;
+//         await tracker.save();
+//     }
+
+//     return nextFillNo;
+// }
