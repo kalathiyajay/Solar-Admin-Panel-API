@@ -95,7 +95,7 @@ const commercialMarketingSchema = mongoose.Schema({
         require: true
     },
 
-// Residential Market Models
+    // Residential Market Models
 
     fillNo: {
         type: String,
@@ -266,9 +266,9 @@ const commercialMarketingSchema = mongoose.Schema({
     status: {
         type: String,
         enum: ["Pending", "Completed"],
-        default: "Pending"
+        default: "Completed"
     }
-    
+
 }, {
     timestamps: true,
     versionKey: false

@@ -2,9 +2,8 @@ const mongoose = require('mongoose');
 
 const dealerSchema = mongoose.Schema({
     name: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "dealerRegister",
-        required: true
+        type: String,
+        require: true
     },
     location: {
         type: String,
@@ -29,6 +28,11 @@ const dealerSchema = mongoose.Schema({
     amount: {
         type: Number,
         require: true
+    },
+    status: {
+        type: String,
+        enum: ["Pending", "Completed"],
+        default: "Pending"
     }
 }, {
     timestamps: true,

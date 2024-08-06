@@ -103,7 +103,7 @@ indexRoutes.delete('/deleteVendor/:id', removeVendor);
 indexRoutes.post('/createDealer', upload.fields([{ name: "adharCard", maxCount: 1 }, { name: "lightBill", maxCount: 1 }, { name: "veraBill", maxCount: 1 }]), createDealer);
 indexRoutes.get('/getAllDealer', getAllDealers);
 indexRoutes.get('/getDealerById/:id', getDealerById);
-indexRoutes.put('/updateDealer/:id', updateDealer);
+indexRoutes.put('/updateDealer/:id', upload.fields([{ name: "adharCard", maxCount: 1 }, { name: "lightBill", maxCount: 1 }, { name: "veraBill", maxCount: 1 }]), updateDealer);
 indexRoutes.delete('/deleteDealer/:id', deleteDealer)
 
 

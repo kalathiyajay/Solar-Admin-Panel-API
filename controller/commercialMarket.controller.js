@@ -210,12 +210,18 @@ exports.updateCommercialMarket = async (req, res) => {
             return res.status(404).json({ status: 404, message: "CommercialMarket Not Found" })
         }
 
-        if (req.files) {
-            req.body.adharCard = req.files['adharCard'][0].path
-            req.body.lightBill = req.files['lightBill'][0].path
-            req.body.veraBill = req.files['veraBill'][0].path
+        if (req.files.adharCard) {
+            req.body.adharCard = req.files.adharCard[0].path
         }
-        
+
+        if (req.files.lightBill) {
+            req.body.lightBill = req.files.lightBill[0].path
+        }
+
+        if (req.files.veraBill) {
+            req.body.veraBill = req.files.veraBill[0].path
+        }
+
         checkCommercialMarketId = await commercialMarket.findByIdAndUpdate(id, { ...req.body }, { new: true });
 
         return res.status(200).json({ status: 200, message: "CommercialMarket Updated Successfully..", CommercialMarket: checkCommercialMarketId })
