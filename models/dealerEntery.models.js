@@ -10,15 +10,15 @@ const dealerSchema = mongoose.Schema({
         require: true
     },
     adharCard: {
-        type: Array,
+        type: String,
         require: true
     },
     lightBill: {
-        type: Array,
+        type: String,
         require: true
     },
     veraBill: {
-        type: Array,
+        type: String,
         require: true
     },
     contactNo: {

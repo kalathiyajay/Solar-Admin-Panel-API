@@ -252,15 +252,15 @@ const commercialMarketingSchema = mongoose.Schema({
     // Other Fields
 
     adharCard: {
-        type: Array,
+        type: String,
         require: true
     },
     lightBill: {
-        type: Array,
+        type: String,
         require: true
     },
     veraBill: {
-        type: Array,
+        type: String,
         require: true
     },
     status: {

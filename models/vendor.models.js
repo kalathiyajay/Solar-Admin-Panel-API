@@ -70,17 +70,21 @@ const vendorSchema = mongoose.Schema({
         type: String,
         require: true
     },
-    government: {
-        type: String,
-        require: true
-    },
-    supplier: {
-        type: String,
-        require: true
-    },
-    transportar: {
-        type: String,
-        require: true
+    // government: {
+    //     type: String,
+    //     require: true
+    // },
+    // supplier: {
+    //     type: String,
+    //     require: true
+    // },
+    // transportar: {
+    //     type: String,
+    //     require: true
+    // },
+    venderType:{
+        type:String,
+        enum:["Government","Supplier","Transportar","Bank"]
     },
     bankDetails: [{
         bankName: {
