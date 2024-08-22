@@ -23,6 +23,8 @@ const { createDealerRegister, getAllDealersRegister, getDealerRegisterById, upda
 const { createNewPurchaseInvoice, getAllPurchaseInvoiceData, getPurchaseInvoiceById, updatePurchaseInvoiceData, deletePurchaseInvoice } = require('../controller/purcahseInvoice.controller');
 const { createNewPurchase, getAllPurchaseData, getPurchaseById, updatePurchaseData, deletePurchase } = require('../controller/purchase.controller');
 const { createTrasportDetaile, getAllTransportDetails, getTransportByID, updateTransportDetails, deleteTransportDetails } = require('../controller/transport.controller');
+const { createSlideBarCategory, getAllSlideBarCategory, getSlideBarCategory, updateSlideBarCategory, deleteSlidBarCategory } = require('../controller/slideBarCategory.Controller');
+const { createSlideBarSubCategory, getAllSlideBarSubCategory, getSlideBarSubCategory, updateSlideBarSubCategory, deleteSlidBarSubCategory } = require('../controller/slideBarSubCategory.controller');
 
 // ------ All Rouutes ------
 
@@ -207,5 +209,21 @@ indexRoutes.get('/allTransportDetails', getAllTransportDetails);
 indexRoutes.get('/getTransportDetails/:id', getTransportByID);
 indexRoutes.put('/updateTransportDetails/:id', updateTransportDetails);
 indexRoutes.delete('/deleteTransportDetails/:id', deleteTransportDetails);
+
+// Slide Bar Category
+
+indexRoutes.post('/creaeSlidebarCategory', upload.single('slideBarImage'), createSlideBarCategory)
+indexRoutes.get('/AllSlideBarCategory', getAllSlideBarCategory);
+indexRoutes.get('/GetslideBarCategory/:id', getSlideBarCategory);
+indexRoutes.put('/updateSlideBarCategory/:id', upload.single('slideBarImage'), updateSlideBarCategory);
+indexRoutes.delete('/deleteSlideBarCategory/:id', deleteSlidBarCategory)
+
+// slide Bar sub Category 
+
+indexRoutes.post('/createSlidebarSubCategory',createSlideBarSubCategory);
+indexRoutes.get('/AllslideBarSubcategory',getAllSlideBarSubCategory);
+indexRoutes.get('/getSlidebarSubCategory/:id',getSlideBarSubCategory);
+indexRoutes.put('/updateSlideBarSubCategory/:id',updateSlideBarSubCategory);
+indexRoutes.delete('/deleteSlideBarSubCategory/:id',deleteSlidBarSubCategory)
 
 module.exports = indexRoutes;
