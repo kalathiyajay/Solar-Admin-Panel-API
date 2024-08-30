@@ -1,21 +1,80 @@
 const purchase = require('../models/purchase.models');
+const srNoTracker = require('../models/srNoTrackerModles');
+
+async function generatesrNo() {
+    const currentDate = new Date();
+
+    let financialYear;
+
+    if (currentDate.getMonth() >= 3) {
+        financialYear = `${currentDate.getFullYear()}-${(currentDate.getFullYear() + 1).toString().slice(-2)}`;
+    } else {
+        financialYear = `${currentDate.getFullYear() - 1}-${currentDate.getFullYear().toString().slice(-2)}`;
+    }
+    let tracker = await srNoTracker.findOne({ financialYear });
+
+    if (!tracker) {
+
+        tracker = new srNoTracker({
+            prefix: 'TEL',
+            lastSequenceNumber: 0,
+            financialYear
+        });
+        await tracker.save();
+    }
+
+    let sequenceNumber = tracker.lastSequenceNumber + 1;
+
+    if (sequenceNumber > 9999) {
+        sequenceNumber = 1;
+    }
+
+    let formattedSequenceNumber = sequenceNumber.toString().padStart(4, '0');
+
+    tracker.lastSequenceNumber = sequenceNumber;
+    await tracker.save();
+
+    return `${tracker.prefix}/${financialYear}/${formattedSequenceNumber}`;
+}
 
 exports.createNewPurchase = async (req, res) => {
     try {
-        let { poc, purchaseDetails, qty, vendor, wareHouse } = req.body;
+        let { SrNo, productName, description, HSHCode, Qty, unitPrice, total, gst, gstAmount = 0, taxableAmount = 0, totalGstAmount = 0, amountTotal = 0 } = req.body;
 
-        let checkPurchasedata = await purchase.findOne({ poc: req.body.poc })
+        let checkPurchasedata = await purchase.findOne({ productName: req.body.productName })
 
         if (checkPurchasedata) {
             return res.status(401).json({ status: 401, message: "Purchase already exists" })
         }
 
+        if (!SrNo) {
+            SrNo = await generatesrNo();
+        }
+
+        let totalAmount = Qty * unitPrice
+
+        let gstTotalAmount = totalAmount * gst / 100
+
+        taxableAmount += totalAmount;
+        gstAmount += gstTotalAmount
+
+        totalGstAmount += gstTotalAmount;
+
+        amountTotal = taxableAmount + totalGstAmount
+
         checkPurchasedata = await purchase.create({
-            poc,
-            purchaseDetails,
-            qty,
-            vendor,
-            wareHouse
+            SrNo,
+            productName,
+            description,
+            HSHCode,
+            Qty,
+            unitPrice,
+            total: totalAmount,
+            gst,
+            gstAmount: gstTotalAmount,
+            taxableAmount,
+            totalGstAmount,
+            amountTotal
         });
 
         return res.status(201).json({ status: 201, message: "Purchase created successfully", purchase: checkPurchasedata })
@@ -52,7 +111,7 @@ exports.getAllPurchaseData = async (req, res) => {
             paginatedPurchase = paginatedPurchase.slice(startIndex, lastIndex)
         }
 
-        return res.status(200).json({ status: 200, totalPurchase: count, message: "All Purchase Found SuccessFully", purchase: paginatedPurchase })
+        return res.status(200).json({ status: 200, totalPurchase: count, message: "All Purchase Found SuccessFully", purchases: paginatedPurchase })
 
     } catch (error) {
         res.status(500).json({ status: 500, message: error.message });
@@ -86,12 +145,37 @@ exports.updatePurchaseData = async (req, res) => {
         let updatePurchase = await purchase.findById(id);
 
         if (!updatePurchase) {
-            return res.status(404).json({ status: 404, message: "Purchase Not Found." })
+            return res.status(404).json({ status: 404, message: "Purchase Not Found" })
         }
+
+        let newQty = updatePurchase.Qty;
+        let newUnitPrice = updatePurchase.unitPrice;
+        let newGst = updatePurchase.gst;
+
+        if (req.body.Qty !== undefined) {
+            newQty = req.body.Qty;
+        }
+        if (req.body.unitPrice !== undefined) {
+            newUnitPrice = req.body.unitPrice;
+        }
+        if (req.body.gst !== undefined) {
+            newGst = req.body.gst;
+        }
+
+        let newTotalAmount = newQty * newUnitPrice;
+        let newGstAmount = newTotalAmount * newGst / 100;
+        let newTotalGstAmount = newTotalAmount + newGstAmount;
+        let newTaxableAmount = newTotalAmount;
+
+        req.body.total = newTotalAmount;
+        req.body.gstAmount = newGstAmount;
+        req.body.taxableAmount = newTaxableAmount;
+        req.body.totalGstAmount = newGstAmount;
+        req.body.amountTotal = newTotalGstAmount
 
         updatePurchase = await purchase.findByIdAndUpdate(id, { ...req.body }, { new: true });
 
-        return res.status(200).json({ status: 200, message: "Purchase Updated SuccessFully", purchase: updatePurchase });
+        return res.status(200).json({ status: 200, message: "Purchase Updated SuccessFully...", purchase: updatePurchase });
 
     } catch (error) {
         res.status(500).json({ status: 500, message: error.message });
@@ -106,12 +190,12 @@ exports.deletePurchase = async (req, res) => {
         let deletepurchase = await purchase.findById(id);
 
         if (!deletepurchase) {
-            return res.status(404).json({ status: 404, message: "Purchasee Not Found." })
+            return res.status(404).json({ status: 404, message: "Purchasee Not Found" })
         }
 
         await purchase.findByIdAndDelete(id);
 
-        return res.status(200).json({ status: 200, message: "Purchase Deleted SuccessFully" });
+        return res.status(200).json({ status: 200, message: "Purchase Deleted SuccessFully..." });
 
     } catch (error) {
         res.status(500).json({ status: 500, message: error.message });
