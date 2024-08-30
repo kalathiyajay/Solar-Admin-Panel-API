@@ -26,6 +26,7 @@ const { createTrasportDetaile, getAllTransportDetails, getTransportByID, updateT
 const { createSlideBarCategory, getAllSlideBarCategory, getSlideBarCategory, updateSlideBarCategory, deleteSlidBarCategory } = require('../controller/slideBarCategory.Controller');
 const { createSlideBarSubCategory, getAllSlideBarSubCategory, getSlideBarSubCategory, updateSlideBarSubCategory, deleteSlidBarSubCategory } = require('../controller/slideBarSubCategory.controller');
 const { auth } = require('../helper/auth');
+const { createConditions, getAllConditions, getConditionById, updateConditionById, deleteConditionById } = require('../controller/termsAndConditionsController');
 
 // ------ All Rouutes ------
 
@@ -226,5 +227,14 @@ indexRoutes.get('/AllslideBarSubcategory', getAllSlideBarSubCategory);
 indexRoutes.get('/getSlidebarSubCategory/:id', auth(["Super Admin"]), getSlideBarSubCategory);
 indexRoutes.put('/updateSlideBarSubCategory/:id', auth(["Super Admin"]), updateSlideBarSubCategory);
 indexRoutes.delete('/deleteSlideBarSubCategory/:id', auth(["Super Admin"]), deleteSlidBarSubCategory)
+
+
+// Terms And Conditions 
+
+indexRoutes.post('/createTermsAndCondition', createConditions);
+indexRoutes.get('/allTermsAndConditions', getAllConditions);
+indexRoutes.get('/getTermsAndCondition/:id', getConditionById);
+indexRoutes.put('/updateTermsAndCondition/:id', updateConditionById);
+indexRoutes.delete('/deleteTermsAndCondition/:id', deleteConditionById);
 
 module.exports = indexRoutes;
